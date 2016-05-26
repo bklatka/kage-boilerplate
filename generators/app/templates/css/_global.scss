@@ -1,0 +1,30 @@
+*{
+	box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	-webkit-box-sizing:border-box;
+}
+a{
+	color:inherit;
+	display:block;
+	text-decoration:none;
+}
+input,select,button,textarea{
+	font-family:inherit;
+	padding:5px;
+	border:none;
+	&:focus{
+		outline:none;
+	}
+}
+textarea{
+	resize:none;
+}
+button{
+	cursor:pointer;
+}
+
+.container{
+	width:1200px;
+	margin:0 auto;
+	display:block;
+}

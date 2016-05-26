@@ -1,0 +1,21 @@
+/* Variables */
+
+
+
+/* Mixins */
+
+@mixin rwd-to($break){
+	@media (max-width:$break+px){@content;}
+}
+
+@mixin transition($params:all 0.2s ease-out){
+	transition:$params;
+	-moz-transition:$params;
+	-webkit-transition:$params;
+}
+
+@mixin border-radius($rad){
+	border-radius:$rad;
+	-moz-border-radius:$rad;
+	-webkit-border-radius:$rad;
+}
