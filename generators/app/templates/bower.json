@@ -1,0 +1,23 @@
+{
+  "name": "<%= metaTitle %>",
+  "description": "<%= metaDesc %>",
+  "main": "index.js",
+  "authors": [
+    "bkage <crimman@gmail.com>"
+  ],
+  "license": "ISC",
+  "moduleType": [],
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "source/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.2.0",
+    "reset-css": "~2.0.2011012603"
+  }
+}

@@ -16,24 +16,6 @@ Then generate your new project:
 yo kage-boilerplate
 ```
 
-## Grunt tasks
-
-There are three grunt tasks available after initializing kage-boilerplate
-```bash
-grunt build
-```
-Use this to compile HTML, CSS and JS files into dist folder.
-
-```bash
-grunt run
-```
-Runs the server (default on port 9000) and opens the browser as well as watch files for changes.
-
-```bash
-grunt min
-```
-
-Minify and uglify css/js in dist folder.
 
 ## License
 
