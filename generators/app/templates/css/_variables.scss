@@ -1,8 +1,12 @@
-/* Variables */
+// Variables
+$laptop: 1200;
+$tablet: 1024;
+$mobile: 768;
+$min-width: 320;
+$max-width: 1920;
 
 
-
-/* Mixins */
+// Mixins
 
 @mixin rwd-to($break){
 	@media (max-width:$break+px){@content;}

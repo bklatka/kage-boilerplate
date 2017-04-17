@@ -9,7 +9,9 @@ module.exports = yeoman.generators.Base.extend({
     var done = this.async();
 
     // Have Yeoman greet the user.
-    console.log('##############GREATINGS##############');
+    console.log('==========================================');
+    console.log('KAGE BOILERPLATE V.1.0====================');
+    console.log('==========================================');
 
     var prompts = [{
       name: 'metaTitle',
@@ -44,34 +46,42 @@ module.exports = yeoman.generators.Base.extend({
   },
 
   scaffoldFolders: function(){
-    mkdirp.sync("source");
-    mkdirp.sync("source/css");
-    mkdirp.sync("source/html");
-    mkdirp.sync("source/js/_modules");
-    mkdirp.sync("source/static_files");
-    mkdirp.sync("source/html/_modules");
+    mkdirp.sync('source');
+    mkdirp.sync('source/css');
+    mkdirp.sync('source/js');
+    mkdirp.sync('source/lib');
+    mkdirp.sync('source/static_files');
+    mkdirp.sync('source/modules');
     
   },
 
   copyMainFiles: function(){
-      this.copy("html/_footer.html", "source/html/_modules/footer.html");
-      this.copy("html/_index.html", "source/html/index.html");
+      this.fs.copy(
+          this.templatePath('modules'),
+          this.destinationPath('source/modules')
+      );
 
-      this.copy("css/_global.scss", "source/css/global.scss");
-      this.copy("css/_variables.scss", "source/css/_variables.scss");
+      this.fs.copy(
+          this.templatePath('css'),
+          this.destinationPath('source/css')
+      );
 
-      this.copy("js/_app.js", "source/js/_modules/app.js");
+      this.fs.copy(
+          this.templatePath('js'),
+          this.destinationPath('source/js')
+      );
 
-      this.copy("lib/build.js", "source/lib/build.js");
-      this.copy("lib/html.js", "source/lib/html.js");
-      this.copy("lib/sass.js", "source/lib/sass.js");
-      this.copy("lib/scripts.js", "source/lib/scripts.js");
-      this.copy("lib/serve.js", "source/lib/serve.js");
-      this.copy("lib/static.js", "source/lib/static.js");
-      this.copy("lib/watch.js", "source/lib/watch.js");
+      this.fs.copy(
+          this.templatePath('lib'),
+          this.destinationPath('source/lib')
+      );
+      this.copy('index.html', 'source/index.html');
 
-      this.copy("_gulpfile.js", "gulpfile.js");
-      this.copy("_.bowerrc", ".bowerrc");
+      this.copy('gulpfile.js', 'gulpfile.js');
+      this.copy('.bowerrc', '.bowerrc');
+      this.copy('.gitignore', '.gitignore');
+
+
       
 
    
@@ -79,12 +89,12 @@ module.exports = yeoman.generators.Base.extend({
           metaTitle: this.metaTitle,
           metaDesc: this.metaDesc,
           metaKeywords: this.metaKeywords,
-          metaIndex: this.metaIndex,
+          metaIndex: this.metaIndex
       };
       
-      this.template("_package.json", "package.json", context);      
-      this.template("_bower.json", "bower.json", context);
-      this.template("html/_head.html", "source/html/_modules/head.html", context);
+      this.template('package.json', 'package.json', context);
+      this.template('bower.json', 'bower.json', context);
+      this.template('modules/_partials/head.html', 'source/modules/_partials/head.html', context);
   },
 
   install: function () {
@@ -92,8 +102,7 @@ module.exports = yeoman.generators.Base.extend({
   },
 
   buildProject:function(){
-    this.spawnCommand('gulp', ['build']);
     this.spawnCommand('gulp', ['serve']);
-  },
+  }
 
 });
