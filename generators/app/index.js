@@ -50,18 +50,14 @@ module.exports = class extends GeneratorHelpers {
       {
         type: 'input',
         name: 'metaDesc',
-        message: 'Metadata - description: '
+        message: chalk.underline.magenta('Metadata - description: ')
       },
       {
         type: 'input',
         name: 'metaKeywords',
-        message: 'Metadata - keywords (separated by comas): '
-      },
-      {
-        type: 'confirm',
-        name: 'metaIndex',
-        message: 'Index in google?',
-        default: true
+        message: chalk.underline.magenta(
+          'Metadata - keywords (separated by comas): '
+        )
       }
     ]);
   }
