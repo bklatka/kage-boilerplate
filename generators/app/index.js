@@ -1,108 +1,120 @@
 'use strict';
-var yeoman = require('yeoman-generator');
-var chalk = require('chalk');
-var yosay = require('yosay');
+var Generator = require('yeoman-generator');
 var mkdirp = require('mkdirp');
+var fs = require('fs');
 
-module.exports = yeoman.generators.Base.extend({
-  prompting: function () {
-    var done = this.async();
+class GeneratorHelpers extends Generator {
+  printBanner() {
+    this.log('==========================================');
+    this.log('KAGE BOILERPLATE V.1.0.0==================');
+    this.log('==========================================');
+  }
 
-    // Have Yeoman greet the user.
-    console.log('==========================================');
-    console.log('KAGE BOILERPLATE V.1.0====================');
-    console.log('==========================================');
+  copyFiles(sourceName, targetFolder, withAnswers = false) {
+    if (!targetFolder) var destLocation = this.destinationPath();
+    else var destLocation = this.destinationPath(targetFolder);
 
-    var prompts = [{
-      name: 'metaTitle',
-      message: 'Metadata - title: ',
-    },{
-      name: 'metaDesc',
-      message: 'Metadata - description: ',
-    },{
-      name:'metaKeywords',
-      message: 'Metadata - keywords (separated by comas): '
-    },{
-      type:'confirm',
-      name:'metaIndex',
-      message:'Index in google?',
-      default: true
-    }];
+    var sourceLocation = this.templatePath(sourceName);
 
-    this.prompt(prompts, function (props) {
-      this.metaTitle = props.metaTitle;
-      this.metaDesc = props.metaDesc;
-      this.metaKeywords = props.metaKeywords;
-      if(props.metaIndex){
-        this.metaIndex='index,follow';
+    var fileExist = fs.existsSync(sourceLocation);
+    if (!fileExist) {
+      this.log(`File ${sourceName} does not exist`);
+      return;
+    }
+
+    if (withAnswers)
+      this.fs.copyTpl(sourceLocation, destLocation, this.answers);
+    else this.fs.copy(sourceLocation, destLocation);
+    this.log(`Copied ${sourceName} to ${destLocation}`);
+  }
+}
+module.exports = class extends GeneratorHelpers {
+  constructor(args, opts) {
+    super(args, opts);
+    this.printBanner();
+  }
+
+  async prompting() {
+    this.answers = await this.prompt([
+      {
+        type: 'input',
+        name: 'metaTitle',
+        message: 'Page title: ',
+        default: this.appname
+      },
+      {
+        type: 'input',
+        name: 'metaDesc',
+        message: 'Metadata - description: '
+      },
+      {
+        type: 'input',
+        name: 'metaKeywords',
+        message: 'Metadata - keywords (separated by comas): '
+      },
+      {
+        type: 'confirm',
+        name: 'metaIndex',
+        message: 'Index in google?',
+        default: true
       }
-      else{
-        this.metaIndex='nofollow';
-      }
-      
-   
-      done();
-    }.bind(this));
-  },
+    ]);
+  }
 
-  scaffoldFolders: function(){
+  scaffoldFolders() {
+    this.log('Creating folders');
     mkdirp.sync('source');
     mkdirp.sync('source/css');
     mkdirp.sync('source/js');
     mkdirp.sync('source/lib');
     mkdirp.sync('source/static_files');
     mkdirp.sync('source/modules');
-    
-  },
-
-  copyMainFiles: function(){
-      this.fs.copy(
-          this.templatePath('modules'),
-          this.destinationPath('source/modules')
-      );
-
-      this.fs.copy(
-          this.templatePath('css'),
-          this.destinationPath('source/css')
-      );
-
-      this.fs.copy(
-          this.templatePath('js'),
-          this.destinationPath('source/js')
-      );
-
-      this.fs.copy(
-          this.templatePath('lib'),
-          this.destinationPath('source/lib')
-      );
-      this.copy('index.html', 'source/index.html');
-
-      this.copy('gulpfile.js', 'gulpfile.js');
-      this.copy('.bowerrc', '.bowerrc');
-      this.copy('.gitignore', '.gitignore');
-
-
-      
-
-   
-      var context = { 
-          metaTitle: this.metaTitle,
-          metaDesc: this.metaDesc,
-          metaKeywords: this.metaKeywords,
-          metaIndex: this.metaIndex
-      };
-      
-      this.template('package.json', 'package.json', context);
-      this.template('bower.json', 'bower.json', context);
-      this.template('modules/_partials/head.html', 'source/modules/_partials/head.html', context);
-  },
-
-  install: function () {
-    this.installDependencies();
-  },
-
-  buildProject:function(){
-    this.spawnCommand('gulp', ['serve']);
+    this.log('Folders created');
   }
 
-});
+  copyMainFiles() {
+    var copyToSource = ['modules', 'css', 'js', 'lib', 'index.html'].map(
+      name => ({
+        source: name,
+        dest: 'source/' + name
+      })
+    );
+
+    var copyToRoot = ['gulpfile.js', '.bowerrc', '.gitignore'].map(name => ({
+      source: name,
+      dest: name
+    }));
+
+    var filesToCopy = [
+      ...copyToSource,
+      ...copyToRoot,
+      {
+        source: 'package.json',
+        dest: 'package.json',
+        asTemplate: true
+      },
+      {
+        source: 'bower.json',
+        dest: 'bower.json',
+        asTemplate: true
+      },
+      {
+        source: 'modules/_partials/head.html',
+        dest: 'source/modules/_partials/head.html',
+        asTemplate: true
+      }
+    ];
+
+    filesToCopy.map(file => {
+      this.copyFiles(file.source, file.dest, file.asTemplate);
+    });
+  }
+
+  install() {
+    this.installDependencies();
+  }
+
+  buildProject() {
+    this.spawnCommand('npm', ['serve']);
+  }
+};
