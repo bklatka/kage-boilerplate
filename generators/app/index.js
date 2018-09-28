@@ -1,13 +1,17 @@
 'use strict';
 var Generator = require('yeoman-generator');
 var mkdirp = require('mkdirp');
+var chalk = require('chalk');
 var fs = require('fs');
+var pjson = require('../../package.json');
 
 class GeneratorHelpers extends Generator {
   printBanner() {
-    this.log('==========================================');
-    this.log('KAGE BOILERPLATE V.1.0.0==================');
-    this.log('==========================================');
+    this.log(chalk.bold.blue('=========================================='));
+    this.log(
+      chalk.bold.blue(`KAGE BOILERPLATE V${pjson.version}==================`)
+    );
+    this.log(chalk.bold.blue('=========================================='));
   }
 
   copyFiles(sourceName, targetFolder, withAnswers = false) {
@@ -18,7 +22,7 @@ class GeneratorHelpers extends Generator {
 
     var fileExist = fs.existsSync(sourceLocation);
     if (!fileExist) {
-      this.log(`File ${sourceName} does not exist`);
+      this.log(chalk.red(`File ${sourceName} does not exist`));
       return;
     }
 
@@ -31,6 +35,7 @@ class GeneratorHelpers extends Generator {
 module.exports = class extends GeneratorHelpers {
   constructor(args, opts) {
     super(args, opts);
+    this.log('\x1Bc');
     this.printBanner();
   }
 
@@ -39,7 +44,7 @@ module.exports = class extends GeneratorHelpers {
       {
         type: 'input',
         name: 'metaTitle',
-        message: 'Page title: ',
+        message: chalk.underline.magenta('Page title: '),
         default: this.appname
       },
       {
@@ -111,10 +116,16 @@ module.exports = class extends GeneratorHelpers {
   }
 
   install() {
-    this.installDependencies();
+    this.installDependencies({
+      npm: false,
+      bower: true,
+      yarn: true
+    });
   }
 
-  buildProject() {
-    this.spawnCommand('npm', ['serve']);
+  end() {
+    this.spawnCommand('git', ['init']);
+    this.spawnCommand('npm', ['run', 'serve']);
+    this.log(chalk.underline.green('Thanks for using kage-boilerplate'));
   }
 };
